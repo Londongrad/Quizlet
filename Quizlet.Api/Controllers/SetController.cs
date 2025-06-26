@@ -40,10 +40,7 @@ public class SetController : ControllerBase
     public async Task<IActionResult> Create([FromBody] Set set)
     {
         var userId = GetUserId();
-        var newSet = new Set(set.Id, set.Name, userId)
-        {
-            ImageUrl = set.ImageUrl,
-        };
+        var newSet = new Set(set.Id, userId, set.Title, set.Description);
 
         await _setRepository.AddAsync(newSet);
         return CreatedAtAction(nameof(Get), new { id = newSet.Id }, newSet);
@@ -55,11 +52,7 @@ public class SetController : ControllerBase
         var existing = await _setRepository.GetByIdAsync(id, GetUserId());
         if (existing == null) return NotFound();
 
-        var updatedSet = new Set(id, updated.Name, existing.UserId)
-        {
-            ImageUrl = updated.ImageUrl,
-            CreatedAt = existing.CreatedAt
-        };
+        var updatedSet = new Set(id, existing.UserId, updated.Title, updated.Description);
 
         await _setRepository.UpdateAsync(updatedSet);
         return NoContent();

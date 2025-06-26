@@ -17,6 +17,7 @@ namespace Quizlet.Infrastructure.Persistence.Repositories
         {
             return await _context.Words
                 .Include(w => w.Set)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(w => w.Id == id && w.Set!.UserId == userId);
         }
 

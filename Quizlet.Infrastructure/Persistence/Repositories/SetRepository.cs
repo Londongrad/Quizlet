@@ -16,12 +16,14 @@ namespace Quizlet.Infrastructure.Persistence.Repositories
         public async Task<Set?> GetByIdAsync(Guid id, Guid userId)
         {
             return await _context.Sets
+                .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId);
         }
 
         public async Task<IEnumerable<Set>> GetAllByUserAsync(Guid userId)
         {
             return await _context.Sets
+                .AsNoTracking()
                 .Where(s => s.UserId == userId)
                 .OrderByDescending(s => s.CreatedAt)
                 .ToListAsync();
