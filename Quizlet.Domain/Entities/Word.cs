@@ -1,6 +1,6 @@
 ﻿namespace Quizlet.Domain.Entities
 {
-    public class Word(Guid id, Guid setId, string name, string definition, bool isFavorite, bool isLastWord) : EntityBase(id)
+    public class Word(Guid id, Guid setId, string name, string definition, bool isFavorite = false, bool isLastWord = false) : EntityBase(id)
     {
         // Parameterless constructor for EF Core
         private Word() : this(Guid.Empty, Guid.Empty, string.Empty, string.Empty, false, false) { }
@@ -9,5 +9,7 @@
         public string Definition { get; private set; } = definition;
         public bool IsFavorite { get; private set; } = isFavorite;
         public bool IsLastWord { get; private set; } = isLastWord;
+        public string? ImageURL { get; private set; }
+        public Set Set { get; private set; } = null!;
     }
 }

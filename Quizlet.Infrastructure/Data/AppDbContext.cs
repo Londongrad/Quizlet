@@ -10,8 +10,9 @@ namespace Quizlet.Infrastructure.Data
         public DbSet<Word> Words => Set<Word>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configure entity mappings here if needed
             base.OnModelCreating(modelBuilder);
+
+
         }
     }
 }

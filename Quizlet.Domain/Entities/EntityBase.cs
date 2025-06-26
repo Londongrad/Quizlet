@@ -1,8 +1,19 @@
 ﻿namespace Quizlet.Domain.Entities
 {
-    public class EntityBase(Guid id)
+    public abstract class EntityBase
     {
-        public Guid Id { get; private set; } = id;
-        public DateTime CreatedAt { get; private set; } = DateTime.Now;
+        public Guid Id { get; private set; }
+        public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+        protected EntityBase()
+        {
+            Id = Guid.NewGuid();
+            CreatedAt = DateTime.UtcNow;
+        }
+
+        protected EntityBase(Guid id)
+        {
+            Id = id;
+            CreatedAt = DateTime.UtcNow;
+        }
     }
 }

@@ -10,5 +10,6 @@
         public string Title { get; private set; } = title;
         public string Description { get; private set; } = description;
         public IReadOnlyCollection<Word> Words => _words.AsReadOnly();
+        public User User { get; private set; } = null!;
     }
 }

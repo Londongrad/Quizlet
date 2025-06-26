@@ -8,6 +8,7 @@
         private readonly List<Set> _sets = [];
         public string UserName { get; private set; } = username;
         public string Email { get; private set; } = email;
+        public string? ImageURL { get; private set; }
         public IReadOnlyCollection<Set> Sets => _sets.AsReadOnly();
     }
 }
