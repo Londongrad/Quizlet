@@ -3,7 +3,9 @@
     public abstract class EntityBase
     {
         public Guid Id { get; private set; }
-        public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; private set; }
+
+        // Parameterless constructor for EF Core
         protected EntityBase()
         {
             Id = Guid.NewGuid();
