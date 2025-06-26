@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Quizlet.Infrastructure.Data;
+using Quizlet.Infrastructure.Persistence;
 
 namespace Quizlet.Api
 {
