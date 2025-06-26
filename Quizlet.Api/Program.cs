@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using Quizlet.Application.Interfaces;
 using Quizlet.Infrastructure.Authentication;
 using Quizlet.Infrastructure.Persistence;
+using Quizlet.Infrastructure.Persistence.Repositories;
 using System.Text;
 
 namespace Quizlet.Api
@@ -18,8 +19,11 @@ namespace Quizlet.Api
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddScoped<IWordRepository, WordRepository>();
+            builder.Services.AddScoped<ISetRepository, SetRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
             #region [ JWT ]
 
@@ -27,7 +31,7 @@ namespace Quizlet.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Quizlet API",
+                    Title = "Quizlet",
                     Version = "v1"
                 });
 
@@ -39,7 +43,7 @@ namespace Quizlet.Api
                     Scheme = "bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "Введите токен в формате: Bearer {your JWT token}"
+                    Description = "Введите токен:"
                 });
 
                 // Применяем к каждому защищённому endpoint

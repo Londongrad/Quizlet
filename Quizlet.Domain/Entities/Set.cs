@@ -1,4 +1,6 @@
-﻿namespace Quizlet.Domain.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace Quizlet.Domain.Entities
 {
     public class Set : EntityBase
     {
@@ -7,9 +9,11 @@
         public string Title { get; private set; } = null!;
         public string? Description { get; private set; }
         public IReadOnlyCollection<Word> Words => _words.AsReadOnly();
+
+        [JsonIgnore]
         public User User { get; private set; } = null!;
 
-        public Set(Guid id, Guid userId, string title, string description) : base(id)
+        public Set(Guid id, Guid userId, string title, string? description = null) : base(id)
         {
             UserId = userId;
             Title = title;

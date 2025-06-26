@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Quizlet.Api.DTOs.Sets;
 using Quizlet.Application.Interfaces;
 using Quizlet.Domain.Entities;
 using System.Security.Claims;
@@ -25,7 +26,7 @@ public class SetController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var sets = await _setRepository.GetAllByUserAsync(GetUserId());
-        return Ok(sets);
+        return Ok(sets.Select(s => s.ToResponse()));
     }
 
     [HttpGet("{id}")]
@@ -33,26 +34,26 @@ public class SetController : ControllerBase
     {
         var set = await _setRepository.GetByIdAsync(id, GetUserId());
         if (set == null) return NotFound();
-        return Ok(set);
+        return Ok(set.ToResponse());
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Set set)
+    public async Task<IActionResult> Create([FromBody] CreateSetRequest request)
     {
         var userId = GetUserId();
-        var newSet = new Set(set.Id, userId, set.Title, set.Description);
+        var newSet = new Set(Guid.NewGuid(), userId, request.Title, request.Description);
 
         await _setRepository.AddAsync(newSet);
-        return CreatedAtAction(nameof(Get), new { id = newSet.Id }, newSet);
+        return CreatedAtAction(nameof(Get), new { id = newSet.Id }, newSet.ToResponse());
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] Set updated)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSetRequest request)
     {
         var existing = await _setRepository.GetByIdAsync(id, GetUserId());
         if (existing == null) return NotFound();
 
-        var updatedSet = new Set(id, existing.UserId, updated.Title, updated.Description);
+        var updatedSet = new Set(id, existing.UserId, request.Title, request.Description);
 
         await _setRepository.UpdateAsync(updatedSet);
         return NoContent();

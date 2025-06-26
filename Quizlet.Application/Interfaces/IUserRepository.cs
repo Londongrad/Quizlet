@@ -7,5 +7,6 @@ namespace Quizlet.Application.Interfaces
         Task<bool> ExistsAsync(string username);
         Task AddAsync(User user);
         Task<User?> GetByCredentialsAsync(string username, string password);
+        Task<User?> GetByUsernameAsync(string username);
     }
 }

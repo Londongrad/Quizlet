@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Quizlet.Api.DTOs.Auth;
 using Quizlet.Application.Interfaces;
+using Quizlet.Domain.Entities;
 
 namespace Quizlet.Api.Controllers
 {
@@ -8,24 +10,41 @@ namespace Quizlet.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IJwtTokenGenerator _tokenGenerator;
+        private readonly IUserRepository _userRepository;
 
-        public AuthController(IJwtTokenGenerator tokenGenerator)
+        public AuthController(IJwtTokenGenerator tokenGenerator, IUserRepository userRepository)
         {
             _tokenGenerator = tokenGenerator;
+            _userRepository = userRepository;
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            // Тут будет реальная проверка логина (пока — фейк)
-            if (request.Username != "admin" || request.Password != "1234")
-                return Unauthorized();
+            var user = await _userRepository.GetByUsernameAsync(request.Username);
 
-            var userId = Guid.NewGuid(); // в реальности ты получаешь это из базы
-            var token = _tokenGenerator.GenerateToken(userId, request.Username);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+                return Unauthorized("Invalid username or password.");
 
-            return Ok(new { token });
+            var token = _tokenGenerator.GenerateToken(user.Id, user.UserName);
+
+            return Ok(new AuthResponse(token, user.Id, user.UserName));
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        {
+            if (await _userRepository.ExistsAsync(request.Username))
+                return BadRequest("Username already taken.");
+
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            var user = new User(Guid.NewGuid(), request.Username, request.Email, passwordHash);
+
+            await _userRepository.AddAsync(user);
+
+            var token = _tokenGenerator.GenerateToken(user.Id, user.UserName);
+
+            return Ok(new AuthResponse(token, user.Id, user.UserName));
         }
     }
-    public record LoginRequest(string Username, string Password);
 }

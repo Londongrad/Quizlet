@@ -4,7 +4,7 @@
     {
         // Parameterless constructor for EF Core
         private User() { }
-        public User(Guid id, string username, string email, string? imageURL, string passwordHash) : base(id)
+        public User(Guid id, string username, string email, string passwordHash, string? imageURL = null) : base(id)
         {
             UserName = username;
             Email = email;
