@@ -25,6 +25,21 @@ namespace Quizlet.Api
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
+            #region [ CORS ]
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins("http://localhost:3000")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
+
+            #endregion [ CORS ]
+
             #region [ JWT ]
 
             builder.Services.AddSwaggerGen(c =>
@@ -95,6 +110,7 @@ namespace Quizlet.Api
                 app.UseSwaggerUI();
             }
 
+            app.UseCors("AllowFrontend");
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
