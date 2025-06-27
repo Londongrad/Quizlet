@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Quizlet.Api.DTOs.Auth;
 using Quizlet.Application.Interfaces;
 using Quizlet.Domain.Entities;
+using System.Security.Claims;
 
 namespace Quizlet.Api.Controllers
 {
@@ -45,6 +47,27 @@ namespace Quizlet.Api.Controllers
             var token = _tokenGenerator.GenerateToken(user.Id, user.UserName);
 
             return Ok(new AuthResponse(token, user.Id, user.UserName));
+        }
+
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> Me()
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdStr, out var userId))
+                return Unauthorized();
+
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user is null) return NotFound();
+
+            var response = new UserProfileResponse(
+                user.Id,
+                user.UserName,
+                user.Email,
+                user.ImageURL
+            );
+
+            return Ok(response);
         }
     }
 }

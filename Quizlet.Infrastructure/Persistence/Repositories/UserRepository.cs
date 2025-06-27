@@ -36,5 +36,10 @@ namespace Quizlet.Infrastructure.Persistence.Repositories
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
         }
+
+        public async Task<User?> GetByIdAsync(Guid id)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+        }
     }
 }
