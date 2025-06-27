@@ -3,7 +3,9 @@ import { api } from "./axios";
 export interface SetDto {
   id: string;
   title: string;
-  definition: string;
+  description: string;
+  createdAt: string;
+  wordCount: number;
 }
 
 export async function fetchSets(): Promise<SetDto[]> {
