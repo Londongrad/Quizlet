@@ -3,12 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using Quizlet.Domain.Entities;
 using Quizlet.Infrastructure.Persistence;
 using Quizlet.Infrastructure.Persistence.Repositories;
+using System.Runtime.CompilerServices;
 
 namespace Tests.Infrastructure
 {
     public class SetRepositoryTests
     {
-        private AppDbContext GetDbContext(string dbName)
+        private static string GetMethodName([CallerMemberName] string methodName = "") => methodName;
+
+        private static AppDbContext GetDbContext(string dbName)
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseInMemoryDatabase(dbName)
@@ -20,7 +23,7 @@ namespace Tests.Infrastructure
         [Fact]
         public async Task AddAsync_ShouldAddSet()
         {
-            var context = GetDbContext(nameof(AddAsync_ShouldAddSet));
+            var context = GetDbContext(GetMethodName());
             var repo = new SetRepository(context);
             var set = new Set(Guid.NewGuid(), Guid.NewGuid(), "Test Set", "Test Description");
 
@@ -34,7 +37,8 @@ namespace Tests.Infrastructure
         [Fact]
         public async Task DeleteAsync_ShouldRemoveSet()
         {
-            var dbName = nameof(DeleteAsync_ShouldRemoveSet);
+            var dbName = GetMethodName();
+
             var userId = Guid.NewGuid();
             var setId = Guid.NewGuid();
 
@@ -65,7 +69,7 @@ namespace Tests.Infrastructure
         [Fact]
         public async Task GetAllByUserAsync_ShouldReturnOnlyUserSets()
         {
-            var context = GetDbContext(nameof(GetAllByUserAsync_ShouldReturnOnlyUserSets));
+            var context = GetDbContext(GetMethodName());
             var repo = new SetRepository(context);
             var userId = Guid.NewGuid();
             var otherUserId = Guid.NewGuid();
@@ -89,7 +93,7 @@ namespace Tests.Infrastructure
         [Fact]
         public async Task ExistsAsync_ShouldReturnTrueIfSetExists()
         {
-            var context = GetDbContext(nameof(ExistsAsync_ShouldReturnTrueIfSetExists));
+            var context = GetDbContext(GetMethodName());
             var repo = new SetRepository(context);
             var userId = Guid.NewGuid();
             var set = new Set(Guid.NewGuid(), userId, "Existing Set", "Defined");
@@ -104,7 +108,7 @@ namespace Tests.Infrastructure
         [Fact]
         public async Task ExistsAsync_ShouldReturnFalseIfSetDoesNotExist()
         {
-            var context = GetDbContext(nameof(ExistsAsync_ShouldReturnFalseIfSetDoesNotExist));
+            var context = GetDbContext(GetMethodName());
             var repo = new SetRepository(context);
             var userId = Guid.NewGuid();
 
@@ -115,7 +119,7 @@ namespace Tests.Infrastructure
         [Fact]
         public async Task UpdateAsync_ShouldUpdateSetTitleAndDefinition()
         {
-            var dbName = nameof(UpdateAsync_ShouldUpdateSetTitleAndDefinition);
+            var dbName = GetMethodName();
             var userId = Guid.NewGuid();
             var setId = Guid.NewGuid();
 
@@ -150,7 +154,7 @@ namespace Tests.Infrastructure
         [Fact]
         public async Task DeleteAsync_ShouldRemoveOnlyUsersOwnSet()
         {
-            var dbName = nameof(DeleteAsync_ShouldRemoveOnlyUsersOwnSet);
+            var dbName = GetMethodName();
             var userId = Guid.NewGuid();
             var wrongUserId = Guid.NewGuid();
             var setId = Guid.NewGuid();

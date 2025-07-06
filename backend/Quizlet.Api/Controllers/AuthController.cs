@@ -36,7 +36,10 @@ namespace Quizlet.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            if (await _userRepository.ExistsAsync(request.Username))
+            if (await _userRepository.EmailExistsAsync(request.Email))
+                return BadRequest("Email already in use.");
+
+            if (await _userRepository.UsernameExistsAsync(request.Username))
                 return BadRequest("Username already taken.");
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);

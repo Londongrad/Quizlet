@@ -13,9 +13,14 @@ namespace Quizlet.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<bool> ExistsAsync(string username)
+        public async Task<bool> UsernameExistsAsync(string username)
         {
             return await _context.Users.AnyAsync(u => u.UserName == username);
+        }
+
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            return await _context.Users.AnyAsync(u => u.Email == email);
         }
 
         public async Task AddAsync(User user)

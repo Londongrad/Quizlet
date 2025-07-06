@@ -3,11 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using Quizlet.Domain.Entities;
 using Quizlet.Infrastructure.Persistence;
 using Quizlet.Infrastructure.Persistence.Repositories;
+using System.Runtime.CompilerServices;
 
 namespace Tests.Infrastructure
 {
     public class WordRepositoryTests
     {
+        private static string GetMethodName([CallerMemberName] string methodName = "") => methodName;
+
         private AppDbContext GetDbContext(string dbName)
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
@@ -20,7 +23,7 @@ namespace Tests.Infrastructure
         [Fact]
         public async Task AddAsync_ShouldAddWord()
         {
-            var context = GetDbContext(nameof(AddAsync_ShouldAddWord));
+            var context = GetDbContext(GetMethodName());
             var repo = new WordRepository(context);
             var setId = Guid.NewGuid();
             var userId = Guid.NewGuid();
@@ -42,7 +45,7 @@ namespace Tests.Infrastructure
         [Fact]
         public async Task GetWordsBySetIdAsync_ShouldReturnCorrectPortion()
         {
-            var context = GetDbContext(nameof(GetWordsBySetIdAsync_ShouldReturnCorrectPortion));
+            var context = GetDbContext(GetMethodName());
             var repo = new WordRepository(context);
             var userId = Guid.NewGuid();
             var setId = Guid.NewGuid();
@@ -66,7 +69,7 @@ namespace Tests.Infrastructure
         [Fact]
         public async Task SearchWordsAsync_ShouldReturnMatchingWords()
         {
-            var context = GetDbContext(nameof(SearchWordsAsync_ShouldReturnMatchingWords));
+            var context = GetDbContext(GetMethodName());
             var repo = new WordRepository(context);
             var userId = Guid.NewGuid();
             var setId = Guid.NewGuid();
@@ -93,7 +96,7 @@ namespace Tests.Infrastructure
         [Fact]
         public async Task GetFavoriteWordsAsync_ShouldReturnOnlyFavorites()
         {
-            var context = GetDbContext(nameof(GetFavoriteWordsAsync_ShouldReturnOnlyFavorites));
+            var context = GetDbContext(GetMethodName());
             var repo = new WordRepository(context);
             var userId = Guid.NewGuid();
             var setId = Guid.NewGuid();
@@ -120,7 +123,7 @@ namespace Tests.Infrastructure
         [Fact]
         public async Task UpdateAsync_ShouldChangeWordProperties()
         {
-            var dbName = nameof(UpdateAsync_ShouldChangeWordProperties);
+            var dbName = GetMethodName();
             var wordId = Guid.NewGuid();
             var userId = Guid.NewGuid();
             var setId = Guid.NewGuid();
@@ -158,7 +161,7 @@ namespace Tests.Infrastructure
         [Fact]
         public async Task DeleteAsync_ShouldNotDeleteIfWrongUser()
         {
-            var context = GetDbContext(nameof(DeleteAsync_ShouldNotDeleteIfWrongUser));
+            var context = GetDbContext(GetMethodName());
             var repo = new WordRepository(context);
             var correctUserId = Guid.NewGuid();
             var wrongUserId = Guid.NewGuid();

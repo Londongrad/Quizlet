@@ -24,6 +24,8 @@ namespace Quizlet.Api
             builder.Services.AddScoped<ISetRepository, SetRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            builder.Services.AddAuthorization();
+            builder.Services.AddAuthentication();
 
             #region [ CORS ]
 
@@ -98,8 +100,6 @@ namespace Quizlet.Api
             });
 
             #endregion [ JWT ]
-
-            builder.Services.AddAuthorization();
 
             var app = builder.Build();
 

@@ -4,7 +4,8 @@ namespace Quizlet.Application.Interfaces
 {
     public interface IUserRepository
     {
-        Task<bool> ExistsAsync(string username);
+        Task<bool> UsernameExistsAsync(string username);
+        Task<bool> EmailExistsAsync(string email);
         Task AddAsync(User user);
         Task<User?> GetByCredentialsAsync(string username, string password);
         Task<User?> GetByUsernameAsync(string username);
