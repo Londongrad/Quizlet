@@ -4,14 +4,9 @@ using Quizlet.Domain.Entities;
 
 namespace Quizlet.Infrastructure.Persistence.Repositories
 {
-    public class SetRepository : ISetRepository
+    public class SetRepository(AppDbContext context) : ISetRepository
     {
-        private readonly AppDbContext _context;
-
-        public SetRepository(AppDbContext context)
-        {
-            _context = context;
-        }
+        private readonly AppDbContext _context = context;
 
         private IQueryable<Set> GetUserSets(Guid userId)
         {
@@ -51,18 +46,15 @@ namespace Quizlet.Infrastructure.Persistence.Repositories
 
         public async Task DeleteAsync(Guid id, Guid userId)
         {
-            var set = await GetByIdAsync(id, userId);
-            if (set != null)
-            {
-                _context.Sets.Remove(set);
-                await _context.SaveChangesAsync();
-            }
+            await GetUserSets(userId)
+                .Where(w => w.Id == id)
+                .ExecuteDeleteAsync();
         }
 
         public async Task<bool> ExistsAsync(Guid id, Guid userId)
         {
-            return await _context.Sets
-                .AnyAsync(s => s.Id == id && s.UserId == userId);
+            return await GetUserSets(userId)
+                .AnyAsync(s => s.Id == id);
         }
     }
 }

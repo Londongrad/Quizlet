@@ -10,14 +10,9 @@ namespace Quizlet.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class SetController : ControllerBase
+public class SetController(ISetRepository setRepository) : ControllerBase
 {
-    private readonly ISetRepository _setRepository;
-
-    public SetController(ISetRepository setRepository)
-    {
-        _setRepository = setRepository;
-    }
+    private readonly ISetRepository _setRepository = setRepository;
 
     private Guid GetUserId() =>
         Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

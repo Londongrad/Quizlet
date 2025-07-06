@@ -10,7 +10,7 @@ namespace Quizlet.Application.Interfaces
         Task AddAsync(Word word);
         Task UpdateAsync(Word word);
         Task DeleteAsync(Guid id, Guid userId);
-        Task<IEnumerable<Word>> GetFavoriteWordsAsync(Guid userId);
+        Task<IEnumerable<Word>> GetFavoriteWordsAsync(Guid setId, Guid userId);
         Task<IEnumerable<Word>> SearchWordsAsync(Guid setId, Guid userId, string query);
     }
 }

@@ -10,14 +10,9 @@ namespace Quizlet.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class WordController : ControllerBase
+public class WordController(IWordRepository wordRepository) : ControllerBase
 {
-    private readonly IWordRepository _wordRepository;
-
-    public WordController(IWordRepository wordRepository)
-    {
-        _wordRepository = wordRepository;
-    }
+    private readonly IWordRepository _wordRepository = wordRepository;
 
     private Guid GetUserId() =>
         Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -36,10 +31,10 @@ public class WordController : ControllerBase
         return word == null ? NotFound() : Ok(word.ToResponse());
     }
 
-    [HttpGet("favorites")]
-    public async Task<IActionResult> GetFavorites()
+    [HttpGet("favorites/{setId}")]
+    public async Task<IActionResult> GetFavorites(Guid setId)
     {
-        var words = await _wordRepository.GetFavoriteWordsAsync(GetUserId());
+        var words = await _wordRepository.GetFavoriteWordsAsync(setId, GetUserId());
         return Ok(words.Select(w => w.ToResponse()));
     }
 

@@ -9,16 +9,10 @@ namespace Quizlet.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController(IJwtTokenGenerator tokenGenerator, IUserRepository userRepository) : ControllerBase
 {
-    private readonly IJwtTokenGenerator _tokenGenerator;
-    private readonly IUserRepository _userRepository;
-
-    public AuthController(IJwtTokenGenerator tokenGenerator, IUserRepository userRepository)
-    {
-        _tokenGenerator = tokenGenerator;
-        _userRepository = userRepository;
-    }
+    private readonly IJwtTokenGenerator _tokenGenerator = tokenGenerator;
+    private readonly IUserRepository _userRepository = userRepository;
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)

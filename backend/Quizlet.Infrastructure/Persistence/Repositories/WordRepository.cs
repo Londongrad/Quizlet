@@ -4,13 +4,13 @@ using Quizlet.Domain.Entities;
 
 namespace Quizlet.Infrastructure.Persistence.Repositories
 {
-    public class WordRepository : IWordRepository
+    public class WordRepository(AppDbContext context) : IWordRepository
     {
-        private readonly AppDbContext _context;
+        private readonly AppDbContext _context = context;
 
-        public WordRepository(AppDbContext context)
+        private IQueryable<Word> GetUserWordsInSet(Guid setId, Guid userId)
         {
-            _context = context;
+            return _context.Words.Where(w => w.SetId == setId && w.Set!.UserId == userId);
         }
 
         public async Task<Word?> GetByIdAsync(Guid id, Guid userId)
@@ -23,8 +23,7 @@ namespace Quizlet.Infrastructure.Persistence.Repositories
 
         public async Task<IEnumerable<Word>> GetWordsBySetIdAsync(Guid setId, Guid userId, int skip, int take)
         {
-            return await _context.Words
-                .Where(w => w.SetId == setId && w.Set!.UserId == userId)
+            return await GetUserWordsInSet(setId, userId)
                 .OrderBy(w => w.Name)
                 .Skip(skip)
                 .Take(take)
@@ -34,8 +33,8 @@ namespace Quizlet.Infrastructure.Persistence.Repositories
 
         public async Task<int> CountWordsInSetAsync(Guid setId, Guid userId)
         {
-            return await _context.Words
-                .CountAsync(w => w.SetId == setId && w.Set!.UserId == userId);
+            return await GetUserWordsInSet(setId, userId)
+                .CountAsync();
         }
 
         public async Task AddAsync(Word word)
@@ -46,35 +45,37 @@ namespace Quizlet.Infrastructure.Persistence.Repositories
 
         public async Task UpdateAsync(Word word)
         {
-            _context.Words.Update(word);
-            await _context.SaveChangesAsync();
+            await _context.Words
+                .Where(w => w.Id == word.Id && w.Set.UserId == word.Set.UserId)
+                .ExecuteUpdateAsync(sp => sp
+                    .SetProperty(w => w.Name, word.Name)
+                    .SetProperty(w => w.Definition, word.Definition)
+                    .SetProperty(w => w.IsFavorite, word.IsFavorite)
+                    .SetProperty(w => w.IsLastWord, word.IsLastWord)
+                    .SetProperty(w => w.ImageURL, word.ImageURL)
+                );
         }
 
         public async Task DeleteAsync(Guid id, Guid userId)
         {
-            var word = await GetByIdAsync(id, userId);
-            if (word != null)
-            {
-                _context.Words.Remove(word);
-                await _context.SaveChangesAsync();
-            }
+            await _context.Words
+                .Where(w => w.Id == id && w.Set.UserId == userId)
+                .ExecuteDeleteAsync();
         }
 
-        public async Task<IEnumerable<Word>> GetFavoriteWordsAsync(Guid userId)
+        public async Task<IEnumerable<Word>> GetFavoriteWordsAsync(Guid setId, Guid userId)
         {
-            return await _context.Words
-                .Where(w => w.IsFavorite && w.Set!.UserId == userId)
-                .OrderBy(w => w.Name)
+            return await GetUserWordsInSet(setId, userId)
+                .Where(w => w.IsFavorite)
+                .OrderByDescending(w => w.CreatedAt)
                 .AsNoTracking()
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<Word>> SearchWordsAsync(Guid setId, Guid userId, string query)
         {
-            return await _context.Words
+            return await GetUserWordsInSet(setId, userId)
                 .Where(w =>
-                    w.SetId == setId &&
-                    w.Set!.UserId == userId &&
                     (w.Name.Contains(query) || w.Definition.Contains(query))
                 )
                 .OrderBy(w => w.Name)
