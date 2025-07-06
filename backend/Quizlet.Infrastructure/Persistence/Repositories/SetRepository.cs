@@ -13,18 +13,22 @@ namespace Quizlet.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
+        private IQueryable<Set> GetUserSets(Guid userId)
+        {
+            return _context.Sets.Where(s => s.UserId == userId);
+        }
+
         public async Task<Set?> GetByIdAsync(Guid id, Guid userId)
         {
-            return await _context.Sets
+            return await GetUserSets(userId)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId);
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public async Task<IEnumerable<Set>> GetAllByUserAsync(Guid userId)
         {
-            return await _context.Sets
+            return await GetUserSets(userId)
                 .AsNoTracking()
-                .Where(s => s.UserId == userId)
                 .OrderByDescending(s => s.CreatedAt)
                 .ToListAsync();
         }
@@ -37,8 +41,12 @@ namespace Quizlet.Infrastructure.Persistence.Repositories
 
         public async Task UpdateAsync(Set set)
         {
-            _context.Sets.Update(set);
-            await _context.SaveChangesAsync();
+            await GetUserSets(set.UserId)
+                .Where(s => s.Id == set.Id)
+                .ExecuteUpdateAsync(sp => sp
+                    .SetProperty(s => s.Title, set.Title)
+                    .SetProperty(s => s.Description, set.Description)
+                );
         }
 
         public async Task DeleteAsync(Guid id, Guid userId)

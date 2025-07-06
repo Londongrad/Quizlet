@@ -115,6 +115,7 @@ namespace Quizlet.Api
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.MapFallbackToFile("index.html");
 
             app.MapControllers();
 

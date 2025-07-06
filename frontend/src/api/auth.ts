@@ -16,7 +16,7 @@ export async function login(username: string, password: string): Promise<string>
       throw new Error(error.response.data.message);
     }
 
-    throw new Error("Login failed");
+    throw new Error("");
   }
 }
 

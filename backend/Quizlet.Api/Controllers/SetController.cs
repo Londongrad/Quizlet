@@ -8,7 +8,7 @@ using System.Security.Claims;
 namespace Quizlet.Api.Controllers;
 
 [ApiController]
-[Route("api/sets")]
+[Route("api/[controller]")]
 [Authorize]
 public class SetController : ControllerBase
 {
