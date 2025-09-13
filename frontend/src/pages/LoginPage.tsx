@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/auth";
 import { FaSpinner } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -29,7 +30,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
       <div className="bg-white text-gray-800 p-8 rounded-xl shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Sign In</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+          Sign In
+        </h2>
         {error && (
           <div className="mb-4 text-sm text-red-600 bg-red-100 p-2 rounded">
             {error}
@@ -37,7 +40,9 @@ export default function LoginPage() {
         )}
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Username</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Username
+            </label>
             <input
               type="text"
               placeholder="yourusername"
@@ -48,7 +53,9 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
             <input
               type="password"
               placeholder="••••••••"
@@ -62,14 +69,21 @@ export default function LoginPage() {
             type="submit"
             disabled={isLoading}
             className={`w-full text-white py-2 rounded transition ${
-              isLoading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+              isLoading
+                ? "bg-blue-300 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
-            {isLoading ? FaSpinner({ className: "animate-spin mx-auto" }) : "Login"}
+            {isLoading
+              ? FaSpinner({ className: "animate-spin mx-auto" })
+              : "Login"}
           </button>
         </form>
         <p className="text-sm text-center text-gray-500 mt-4">
-          Don't have an account? <a href="/register" className="text-blue-600 hover:underline">Register</a>
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-600 hover:underline">
+            Register
+          </Link>
         </p>
       </div>
     </div>
